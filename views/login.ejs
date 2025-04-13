@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    
+<head>
+
+  <title>Login</title>
+
+  <style>
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f6f4fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      width: 320px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 24px;
+      color: #7a9e9f;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #84a59d;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #99c1b9;
+    }
+
+    .error {
+      color: #e5989b;
+      margin-top: 12px;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>Welcome to KnowBoi</h1>
+    <form method="POST" action="/login">
+      <input name="username" placeholder="Username" required />
+      <input name="password" type="password" placeholder="Password" required />
+      <button type="submit">Login</button>
+    </form>
+
+    <% if (error) { %>
+      <div class="error"><%= error %></div>
+    <% } %>
+  </div>
+
+</body>
+
+</html>

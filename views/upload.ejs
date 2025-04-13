@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <title>Upload</title>
+
+  <style>
+    body {
+     background-color: #f6f4fa;
+     font-family: 'Segoe UI', sans-serif;
+     color: #4a4e69;
+     max-width: 800px;
+     margin: 0 auto;
+     padding: 40px 20px;
+    }
+
+    h1 {
+      color: #7a9e9f;
+    }
+
+    form {
+      background: #e9f5f2;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    input[type="file"] {
+      margin-bottom: 10px;
+    }
+
+    button {
+      background-color: #84a59d;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #99c1b9;
+    }
+
+
+    .msg {
+      margin-top: 15px;
+    }
+
+    .nav {
+      margin-top: 20px;
+    }
+
+    .nav a {
+      display: inline-block;
+      margin: 10px;
+      padding: 12px 24px;
+      font-size: 15px;
+      color: white;
+      background-color: #84a59d;
+      text-decoration: none;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: background 0.3s;
+    }
+
+    .nav a:hover {
+      background-color: #99c1b9;
+    
+    }
+
+    .success {
+      color: #6a994e;
+      margin-top: 10px;
+    }
+
+    .error {
+      color: #e5989b;
+      margin-top: 10px;
+    }
+
+  </style>
+
+  </head>
+
+<body>
+  <h1>Upload a Text File</h1>
+
+  <% if (error) { %><p class="error"><%= error %></p><% } %>
+  <% if (success) { %><p class="success"><%= success %></p><% } %>
+
+  <form method="POST" action="/upload" enctype="multipart/form-data">
+    <input type="file" name="file" accept=".txt" required />
+    <button type="submit">Upload</button>
+  </form>
+
+  <div class="nav">
+    <a href="/">🏠 Home</a>
+    <a href="/ask">🤖 Ask</a>
+    <a href="/logout">Logout</a>
+  </div>
+
+</body>
+
+</html>

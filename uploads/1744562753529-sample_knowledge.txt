@@ -1,0 +1,51 @@
+How to Reset Your Password
+To reset your password, click the "Forgot Password" link on the login page. You will receive an email with instructions to create a new password.
+
+Getting Started with KnowBoi
+KnowBoi is a knowledge base assistant that helps you search through uploaded documents using semantic search. Upload your .txt files and ask questions to get accurate answers powered by OpenAI.
+
+Admin Access
+Only users with admin privileges can access the admin dashboard. From there, you can manage users, delete documents, and monitor usage.
+
+Supported File Types
+Currently, KnowBoi only supports plain text files (.txt). Support for PDF and DOCX may be added in the future.
+
+Data Privacy
+Your uploaded documents are stored securely and can be accessed by any user in the shared workspace. We do not expose files publicly outside of the KnowBoi platform.
+
+Asking a Good Question
+To get the best answers, ask clear, specific questions. For example, instead of asking “how?”, try “how do I reset my password using KnowBoi?”.
+
+Token Limits
+Each query is processed with a limit on how much text can be considered. This ensures fast responses and prevents overload.
+
+Embedding Details
+Each uploaded document is split into chunks and converted into a 1536-dimensional vector using OpenAI's text-embedding-ada-002 model.
+
+---
+
+Employee Onboarding Process
+All new employees must complete orientation within the first 5 business days. This includes HR paperwork, security training, and an overview of internal tools like KnowBoi.
+
+Time-Off Requests
+Employees must submit vacation requests at least 2 weeks in advance using the internal HR portal. All requests are subject to approval by the department lead.
+
+Incident Escalation Workflow
+If an issue cannot be resolved within Tier 1 support, escalate to Tier 2 by creating a JIRA ticket and tagging the responsible team lead. Critical issues must also be reported via Slack #escalations.
+
+Work from Home Policy
+Employees are allowed to work remotely up to 3 times per week. All remote work must be logged via the Attendance Tracker app by 9:00 AM.
+
+Data Backup Protocol
+All internal documents are backed up to AWS S3 every 24 hours. If you need to restore a file, submit a request through the IT Helpdesk portal.
+
+Monthly Performance Reviews
+Managers must schedule 1-on-1 performance reviews by the last Friday of each month. The HR team sends auto-reminders every 20th of the month.
+
+Slack Naming Convention
+Usernames in Slack should follow the format: `firstname.lastname`. For example, Carlo Reyes would be `carlo.reyes`. Nicknames and emojis are discouraged in professional channels.
+
+---
+
+Need Help?
+For support using KnowBoi, contact the internal Dev Tools team via Slack or email `devtools@company.local`. You may also create a support ticket in the Helpdesk system.

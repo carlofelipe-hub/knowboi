@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    
+  <title>KnowBoi Home</title>
+  
+  <style>
+
+    
+
+    body {
+     background-color: #f6f4fa;
+     font-family: 'Segoe UI', sans-serif;
+     color: #4a4e69;
+     max-width: 800px;
+     margin: 0 auto;
+     padding: 40px 20px;
+    }
+
+    h1 {
+      font-size: 36px;
+      color: #7a9e9f;
+    }
+
+    p {
+      font-size: 18px;
+      color: #4a4e69;
+      margin-bottom: 40px;
+    }
+
+    .nav a {
+      display: inline-block;
+      margin: 10px;
+      padding: 12px 24px;
+      font-size: 15px;
+      color: white;
+      background-color: #84a59d;
+      text-decoration: none;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: background 0.3s;
+    }
+
+    .nav a:hover {
+      background-color: #99c1b9;
+    }
+
+    button {
+      background-color: #84a59d;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #99c1b9;
+    }
+
+    .success {
+      color: #6a994e;
+      margin-top: 10px;
+    }
+
+    .error {
+      color: #e5989b;
+      margin-top: 10px;
+    }
+
+  </style>
+
+
+</head>
+
+<body>
+  <h1>Welcome, <%= username %> 👋</h1>
+  <p>What would you like to do today?</p>
+
+  <div class="nav">
+    <a href="/ask">🤖 Ask a Question</a>
+    <a href="/upload">📄 Upload Document</a>
+    <a href="/logout">🚪 Logout</a>
+  </div>
+
+</body>
+
+</html>

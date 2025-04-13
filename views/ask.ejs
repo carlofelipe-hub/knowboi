@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <title>KnowBoi – Ask a Question</title>
+
+  <style>
+
+    body {
+     background-color: #f6f4fa;
+     font-family: 'Segoe UI', sans-serif;
+     color: #4a4e69;
+     max-width: 800px;
+     margin: 0 auto;
+     padding: 40px 20px;
+    }
+
+    h1 {
+      color: #7a9e9f; /* pastel mint */
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      color: #6d6875; /* soft lavender */
+      font-size: 22px;
+      margin-top: 30px;
+    }
+
+    .chat-box {
+      background: #f4f1de; /* pastel beige */
+      border-radius: 12px;
+      padding: 15px 20px;
+      margin: 15px 0;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    .q {
+      font-weight: 600;
+      color: #e5989b; /* blush pink */
+      margin-bottom: 5px;
+    }
+
+    .a {
+      margin-top: 5px;
+      color: #4a4e69;
+    }
+
+    form {
+      margin-top: 30px;
+      background: #e9f5f2; /* pastel mint */
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #84a59d;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #99c1b9;
+    }
+
+
+    .nav {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .nav a {
+      display: inline-block;
+      margin: 10px;
+      padding: 12px 24px;
+      font-size: 15px;
+      color: white;
+      background-color: #84a59d;
+      text-decoration: none;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: background 0.3s;
+    }
+
+    .nav a:hover {
+      background-color: #99c1b9;
+    }
+
+    .success {
+      color: #6a994e;
+      margin-top: 10px;
+    }
+
+    .error {
+      color: #e5989b;
+      margin-top: 10px;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <h1>Ask KnowBoi</h1>
+
+  <% if (chatHistory && chatHistory.length) { %>
+    <h2>Conversation History</h2>
+    <% chatHistory.forEach(function(item, i) { %>
+      <div class="chat-box">
+        <div class="q">Q<%= i + 1 %>: <%= item.q %></div>
+        <div class="a">A<%= i + 1 %>: <%= item.a %></div>
+      </div>
+    <% }) %>
+  <% } %>
+
+  <form method="POST" action="/ask">
+    <input type="text" name="question" placeholder="Type your question here..." required />
+    <button type="submit">Ask</button>
+  </form>
+
+  <div class="nav">
+    <a href="/">🏠 Back to Menu</a>
+    <a href="/upload">📄 Upload</a>
+    <a href="/logout">🚪 Logout</a>
+  </div>
+
+</body>
+
+</html>
