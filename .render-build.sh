@@ -1,0 +1,1 @@
+echo 'npm install --build-from-source sqlite3' > .render-build.sh

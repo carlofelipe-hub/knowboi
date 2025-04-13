@@ -19,7 +19,7 @@
     "nodemon": "^3.1.9",
     "openai": "^4.93.0",
     "pinecone-client": "^2.0.0",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.6"
   },
   "description": ""
 }
