@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: knowboi
+    env: node
+    buildCommand: npm install
+    startCommand: node app.js
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: PINECONE_API_KEY
+        sync: false
+      - key: PINECONE_ENVIRONMENT
+        sync: false
+      - key: PINECONE_INDEX_NAME
+        sync: false
+      - key: SESSION_SECRET
+        sync: false
