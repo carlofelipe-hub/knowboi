@@ -6,14 +6,16 @@ const { requireLogin } = require('../utils/middleware');
 const dotenv = require('dotenv');
 dotenv.config();
 
+// 🔑 Initialize OpenAI v4
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
+// 🌲 Initialize Pinecone
 const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
 const index = pinecone.Index(process.env.PINECONE_INDEX_NAME);
 
-// GET: show ask page
+// GET: Show Ask page
 router.get('/ask', requireLogin, (req, res) => {
   res.render('ask', {
     answer: null,
@@ -21,22 +23,22 @@ router.get('/ask', requireLogin, (req, res) => {
   });
 });
 
-// POST: handle question
+// POST: Handle question
 router.post('/ask', requireLogin, express.json(), async (req, res) => {
   const question = req.body.question;
+  console.log("🟢 Question received:", question);
 
   try {
-    // ✅ FIXED: define embedResponse first
+    // ➕ Generate embedding
     const embedResponse = await openai.embeddings.create({
       model: "text-embedding-ada-002",
       input: question
     });
+
     const queryVector = embedResponse.data[0].embedding;
+    console.log("📎 Embedding length:", queryVector.length);
 
-    // ... rest of your code follows
-
-
-    // 🔍 Query Pinecone
+    // 🔍 Search Pinecone
     const result = await index.query({
       vector: queryVector,
       topK: 5,
@@ -44,7 +46,9 @@ router.post('/ask', requireLogin, express.json(), async (req, res) => {
     });
 
     const topChunks = result.matches.map(match => match.metadata.text);
+    console.log("📚 Chunks retrieved:", topChunks.length);
 
+    // ✨ Build conversation prompt
     req.session.chatHistory ||= [];
 
     const historyContext = req.session.chatHistory
@@ -66,16 +70,15 @@ Current Question: ${question}
 
 -- just get straight to the point, don't say things like "Based on the document" or "According to the text".
 `;
-    
+
+    // 💬 Chat completion
     const messages = [
-        ...req.session.chatHistory
-        .slice(-5)
-        .flatMap(pair => ([
-          { role: "user", content: pair.q },
-          { role: "assistant", content: pair.a }
-        ])),
+      ...req.session.chatHistory.slice(-5).flatMap(pair => [
+        { role: "user", content: pair.q },
+        { role: "assistant", content: pair.a }
+      ]),
       { role: "user", content: prompt }
-  ];
+    ];
 
     const chatResponse = await openai.chat.completions.create({
       model: "gpt-3.5-turbo", // or "gpt-4" if you're using GPT-4
@@ -84,16 +87,17 @@ Current Question: ${question}
       max_tokens: 1024
     });
 
-    const answer = chatResponse.data.choices[0].message.content;
+    const answer = chatResponse.choices[0].message.content;
+    console.log("✅ Answer generated:", answer);
 
+    // 💾 Save to session
     req.session.chatHistory.push({ q: question, a: answer });
 
-    // ✅ Return JSON for frontend JS to handle
     res.json({ answer });
 
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ answer: 'Something went wrong!' });
+    console.error("❌ Error in /ask route:", err.response?.data || err.message || err);
+    res.status(500).json({ answer: '⚠️ Something went wrong on the server.' });
   }
 });
 
