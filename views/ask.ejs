@@ -1,75 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-
-  <style>
-    .chat-entry {
-      margin-top: 15px;
-    }
-  
-    .dots {
-      font-style: italic;
-      display: inline-block;
-      margin-left: 6px;
-    }
-  
-    .dot {
-      animation: blink 1s infinite;
-    }
-  
-    .dot:nth-child(2) { animation-delay: 0.2s; }
-    .dot:nth-child(3) { animation-delay: 0.4s; }
-  
-    @keyframes blink {
-      0%, 100% { opacity: 0; }
-      50% { opacity: 1; }
-    }
-  
-    .spinner {
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      margin-left: 10px;
-      border: 2px solid #ccc;
-      border-top: 2px solid #84a59d;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      vertical-align: middle;
-    }
-  
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  </style>
-
   <title>KnowBoi – Ask a Question</title>
 
   <style>
-
     body {
-     background-color: #f6f4fa;
-     font-family: 'Segoe UI', sans-serif;
-     color: #4a4e69;
-     max-width: 800px;
-     margin: 0 auto;
-     padding: 40px 20px;
+      background-color: #f6f4fa;
+      font-family: 'Segoe UI', sans-serif;
+      color: #4a4e69;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
     }
 
     h1 {
-      color: #7a9e9f; /* pastel mint */
+      color: #7a9e9f;
       font-size: 32px;
       margin-bottom: 10px;
     }
 
     h2 {
-      color: #6d6875; /* soft lavender */
+      color: #6d6875;
       font-size: 22px;
       margin-top: 30px;
     }
 
     .chat-box {
-      background: #f4f1de; /* pastel beige */
+      background: #f4f1de;
       border-radius: 12px;
       padding: 15px 20px;
       margin: 15px 0;
@@ -78,7 +35,7 @@
 
     .q {
       font-weight: 600;
-      color: #e5989b; /* blush pink */
+      color: #e5989b;
       margin-bottom: 5px;
     }
 
@@ -89,7 +46,7 @@
 
     form {
       margin-top: 30px;
-      background: #e9f5f2; /* pastel mint */
+      background: #e9f5f2;
       padding: 20px;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -118,7 +75,6 @@
     button:hover {
       background-color: #99c1b9;
     }
-
 
     .nav {
       margin-top: 20px;
@@ -152,8 +108,45 @@
       margin-top: 10px;
     }
 
-  </style>
+    .chat-entry {
+      margin-top: 15px;
+    }
 
+    .dots {
+      font-style: italic;
+      display: inline-block;
+      margin-left: 6px;
+    }
+
+    .dot {
+      animation: blink 1s infinite;
+    }
+
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes blink {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin-left: 10px;
+      border: 2px solid #ccc;
+      border-top: 2px solid #84a59d;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 
 <body>
@@ -196,20 +189,18 @@
     const form = document.getElementById('ask-form');
     const questionInput = document.getElementById('question-input');
     const chatBox = document.getElementById('chat-box');
-  
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-  
+
       const question = questionInput.value.trim();
       if (!question) return;
-  
-      // Add user message
+
       const userMsg = document.createElement('div');
       userMsg.className = 'chat-entry';
       userMsg.innerHTML = `<strong>You:</strong> ${question}`;
       chatBox.appendChild(userMsg);
-  
-      // Add bot loading message
+
       const botMsg = document.createElement('div');
       botMsg.className = 'chat-entry';
       botMsg.innerHTML = `
@@ -218,29 +209,29 @@
         <span class="spinner"></span>
       `;
       chatBox.appendChild(botMsg);
-  
-      // Scroll to bottom
+
       chatBox.scrollTop = chatBox.scrollHeight;
-  
-      const res = await fetch('/ask', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ question })
-      });
-  
-      const data = await res.json();
-  
-      // Replace typing animation with real answer
-      botMsg.innerHTML = `<strong>KnowBoi:</strong> ${data.answer}`;
-  
+
+      try {
+        const res = await fetch('/ask', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question })
+        });
+
+        if (!res.ok) throw new Error(`Server responded with ${res.status}`);
+
+        const data = await res.json();
+        botMsg.innerHTML = `<strong>KnowBoi:</strong> ${data.answer}`;
+      } catch (err) {
+        console.error("Fetch error:", err);
+        botMsg.innerHTML = `<strong>KnowBoi:</strong> ⚠️ Something went wrong. Please try again.`;
+      }
+
       questionInput.value = '';
       chatBox.scrollTop = chatBox.scrollHeight;
     });
   </script>
-  
 
 </body>
-
 </html>
