@@ -31,7 +31,7 @@ router.post('/ask', requireLogin, express.json(), async (req, res) => {
       model: "text-embedding-ada-002",
       input: question,
     });
-    const queryVector = embedResponse.data.data[0].embedding;
+    const queryVector = embedResponse.data[0].embedding;
 
     // 🔍 Query Pinecone
     const result = await index.query({
