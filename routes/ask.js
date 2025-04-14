@@ -21,17 +21,20 @@ router.get('/ask', requireLogin, (req, res) => {
   });
 });
 
-// POST: handle question via AJAX
+// POST: handle question
 router.post('/ask', requireLogin, express.json(), async (req, res) => {
   const question = req.body.question;
 
   try {
-    // 🧠 Generate embedding using OpenAI
-    const embeddingResponse = await openai.embeddings.create({
+    // ✅ FIXED: define embedResponse first
+    const embedResponse = await openai.embeddings.create({
       model: "text-embedding-ada-002",
-      input: question,
+      input: question
     });
-    const queryVector = response.data[0].embedding;
+    const queryVector = embedResponse.data[0].embedding;
+
+    // ... rest of your code follows
+
 
     // 🔍 Query Pinecone
     const result = await index.query({
