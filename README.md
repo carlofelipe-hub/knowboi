@@ -1,3 +1,5 @@
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?logo=linkedin)](https://www.linkedin.com/in/carlofelipe/)
+
 # KnowBoi 🧠📚
 
 KnowBoi is a simple knowledge base assistant built with Node.js, Express, EJS, and OpenAI. Upload `.txt` files, ask natural language questions, and get intelligent answers using vector search powered by Pinecone.
