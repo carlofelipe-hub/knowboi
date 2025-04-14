@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { OpenAI } = require('openai');
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { Pinecone } = require('@pinecone-database/pinecone');
 const { requireLogin } = require('../utils/middleware');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY); 
 const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
 const index = pinecone.Index(process.env.PINECONE_INDEX_NAME);
 
@@ -23,12 +23,9 @@ router.post('/ask', requireLogin, express.json(), async (req, res) => {
   const question = req.body.question;
 
   try {
-    const embedRes = await openai.embeddings.create({
-      model: 'text-embedding-ada-002',
-      input: question
-    });
-
-    const queryVector = embedRes.data[0].embedding;
+      const model = genAI.getModel("models/text-embedding-004");
+      const embedResult = await model.embedContent(question);
+      const queryVector = embedResult.embedding.values;
 
     const result = await index.query({
       vector: queryVector,
@@ -59,13 +56,19 @@ Current Question: ${question}
 
 -- just get straight to the point, don't say things like "Based on the document" or "According to the text".
 `;
+    
+    const chatModel = genAI.getModel("models/gemini-2.0-flash");       
+    const chat = chatModel.startChat({
+        history: req.session.chatHistory.slice(-5).map(h => ({ role: "user", parts: h.q }, { role: "model", parts: h.a })).flat(),  
+        generationConfig: {
+        maxOutputTokens: 2048,                         
+      },
+    });    
 
-    const chatRes = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [{ role: 'user', content: prompt }]
-    });
 
-    const answer = chatRes.choices[0].message.content;
+    const chatResult = await chat.sendMessage(prompt);
+    const chatResponse = await chatResult.response;
+    const answer = chatResponse.text();
 
     req.session.chatHistory.push({ q: question, a: answer });
 
