@@ -16,13 +16,13 @@ const openai = new OpenAI({
 
 async function getEmbedding(text) {
   try {
-    const response = await openai.createEmbedding({
+    const response = await openai.embeddings.create({
       model: "text-embedding-ada-002",
-      input: text,
+      input: text
     });
     return response.data[0].embedding;
   } catch (error) {
-    console.error("OpenAI Embedding Error:", error.response?.data || error.message);
+    console.error("OpenAI Embedding Error:", error);
     return null;
   }
 }
@@ -60,17 +60,19 @@ async function embedAndStore(filename, textContent) {
     const vectors = [];
 
     for (let i = 0; i < chunks.length; i++) {
-        const chunk = chunks[i];
-        const embedding = await getEmbedding(chunk);
-        vectors.push({
-            id: `${filename}_${i}`,
-            values: embedding,
-            metadata: {
-            text: chunk,
-            source: filename
-            }
-        });
+      const chunk = chunks[i];
+      const embedding = await getEmbedding(chunk);
+      if (!embedding) continue; // skip nulls
+      vectors.push({
+          id: `${filename}_${i}`,
+          values: embedding,
+          metadata: {
+          text: chunk,
+          source: filename
     }
+  });
+}
+
 
     await index.upsert(vectors);
     console.log(`✅ Uploaded ${vectors.length} chunks from ${filename} to Pinecone`);
