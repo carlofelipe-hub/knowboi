@@ -1,27 +1,34 @@
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { Configuration, OpenAIApi } = require("openai");
 const { Pinecone } = require('@pinecone-database/pinecone');
 const fs = require('fs');
 const path = require('path');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY); 
 const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
 const index = pinecone.Index(process.env.PINECONE_INDEX_NAME);
 
-// 🧠 Convert text to embedding using OpenAI
+// initialize openai
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
+
+// embedding from openai
+
 async function getEmbedding(text) {
   try {
-    const model = genAI.getModel("models/text-embedding-004");
-    const result = await model.embedContent(text);
-    const embedding = result.embedding.values;
-    return embedding;
+    const response = await openai.createEmbedding({
+      model: "text-embedding-ada-002",
+      input: text,
+    });
+    return response.data.data[0].embedding;
   } catch (error) {
-    console.error("Gemini Embedding Error:", error);
+    console.error("OpenAI Embedding Error:", error.response?.data || error.message);
     return null;
   }
 }
-  
+
 
 // ✂️ Split text into chunks (~500 chars each)
 function splitIntoChunks(text, maxLength = 500) {

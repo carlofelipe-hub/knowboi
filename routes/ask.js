@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { Configuration, OpenAIApi } = require("openai");
 const { Pinecone } = require('@pinecone-database/pinecone');
 const { requireLogin } = require('../utils/middleware');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY); 
+const configuration = new Configuration({ apiKey: process.env.OPENAI_API_KEY });
+const openai = new OpenAIApi(configuration);
+
 const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
 const index = pinecone.Index(process.env.PINECONE_INDEX_NAME);
 
@@ -23,14 +25,18 @@ router.post('/ask', requireLogin, express.json(), async (req, res) => {
   const question = req.body.question;
 
   try {
-      const model = genAI.getModel("models/text-embedding-004");
-      const embedResult = await model.embedContent(question);
-      const queryVector = embedResult.embedding.values;
+    // 🧠 Generate embedding using OpenAI
+    const embedResponse = await openai.createEmbedding({
+      model: "text-embedding-ada-002",
+      input: question,
+    });
+    const queryVector = embedResponse.data.data[0].embedding;
 
+    // 🔍 Query Pinecone
     const result = await index.query({
       vector: queryVector,
       topK: 5,
-      includeMetadata: true
+      includeMetadata: true,
     });
 
     const topChunks = result.matches.map(match => match.metadata.text);
@@ -57,18 +63,17 @@ Current Question: ${question}
 -- just get straight to the point, don't say things like "Based on the document" or "According to the text".
 `;
     
-    const chatModel = genAI.getModel("models/gemini-2.0-flash");       
-    const chat = chatModel.startChat({
-        history: req.session.chatHistory.slice(-5).map(h => ({ role: "user", parts: h.q }, { role: "model", parts: h.a })).flat(),  
-        generationConfig: {
-        maxOutputTokens: 2048,                         
-      },
-    });    
+       const chatResponse = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo", // or "gpt-4" if you're using GPT-4
+      messages: [
+        ...chatHistory,
+        { role: 'user', content: prompt }
+      ],
+      temperature: 0.7,
+      max_tokens: 1024,
+    });
 
-
-    const chatResult = await chat.sendMessage(prompt);
-    const chatResponse = await chatResult.response;
-    const answer = chatResponse.text();
+    const answer = chatResponse.data.choices[0].message.content;
 
     req.session.chatHistory.push({ q: question, a: answer });
 
