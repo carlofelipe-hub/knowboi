@@ -81,7 +81,7 @@ Current Question: ${question}
     ];
 
     const chatResponse = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo", // or "gpt-4" if you're using GPT-4
+      model: "gpt-4.1-mini", 
       messages,
       temperature: 0.7,
       max_tokens: 1024
