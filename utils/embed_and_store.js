@@ -1,4 +1,4 @@
-const { Configuration, OpenAIApi } = require("openai");
+const OpenAI = require("openai");
 const { Pinecone } = require('@pinecone-database/pinecone');
 const fs = require('fs');
 const path = require('path');
@@ -8,11 +8,9 @@ dotenv.config();
 const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
 const index = pinecone.Index(process.env.PINECONE_INDEX_NAME);
 
-// initialize openai
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
 });
-const openai = new OpenAIApi(configuration);
 
 // embedding from openai
 
