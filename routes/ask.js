@@ -53,6 +53,8 @@ router.post('/ask', requireLogin, async (req, res) => {
   ${historyContext || '[No previous context]'}
   
   Current Question: ${question}
+
+  -- just get straight to the point, don't say things like "Based on the document" or things like "based on provided".
   `;
   
       const chatRes = await openai.chat.completions.create({
