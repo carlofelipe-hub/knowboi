@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { Configuration, OpenAIApi } = require("openai");
+const OpenAI = require("openai");
 const { Pinecone } = require('@pinecone-database/pinecone');
 const { requireLogin } = require('../utils/middleware');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const configuration = new Configuration({ apiKey: process.env.OPENAI_API_KEY });
-const openai = new OpenAIApi(configuration);
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
 
 const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
 const index = pinecone.Index(process.env.PINECONE_INDEX_NAME);
@@ -26,9 +27,9 @@ router.post('/ask', requireLogin, express.json(), async (req, res) => {
 
   try {
     // 🧠 Generate embedding using OpenAI
-    const embedResponse = await openai.createEmbedding({
+    const embeddingResponse = await openai.embeddings.create({
       model: "text-embedding-ada-002",
-      input: question,
+      input: text,
     });
     const queryVector = embedResponse.data.data[0].embedding;
 
@@ -63,14 +64,21 @@ Current Question: ${question}
 -- just get straight to the point, don't say things like "Based on the document" or "According to the text".
 `;
     
-       const chatResponse = await openai.createChatCompletion({
+    const messages = [
+        ...req.session.chatHistory
+        .slice(-5)
+        .flatMap(pair => ([
+          { role: "user", content: pair.q },
+          { role: "assistant", content: pair.a }
+        ])),
+      { role: "user", content: prompt }
+  ];
+
+    const chatResponse = await openai.chat.completions.create({
       model: "gpt-3.5-turbo", // or "gpt-4" if you're using GPT-4
-      messages: [
-        ...chatHistory,
-        { role: 'user', content: prompt }
-      ],
+      messages,
       temperature: 0.7,
-      max_tokens: 1024,
+      max_tokens: 1024
     });
 
     const answer = chatResponse.data.choices[0].message.content;
