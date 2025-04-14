@@ -20,7 +20,7 @@ async function getEmbedding(text) {
       model: "text-embedding-ada-002",
       input: text,
     });
-    return response.data.data[0].embedding;
+    return response.data[0].embedding;
   } catch (error) {
     console.error("OpenAI Embedding Error:", error.response?.data || error.message);
     return null;
