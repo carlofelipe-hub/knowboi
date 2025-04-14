@@ -18,7 +18,7 @@
     "multer": "^1.4.5-lts.2",
     "nodemon": "^3.1.9",
     "sqlite3": "^5.1.6",
-    "@google/generative-ai": "^1.0.0"
+    "openai": "^4.0.0"
   },
   "description": ""
 }
