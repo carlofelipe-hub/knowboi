@@ -2,6 +2,47 @@
 <html>
 <head>
 
+  <style>
+    .chat-entry {
+      margin-top: 15px;
+    }
+  
+    .dots {
+      font-style: italic;
+      display: inline-block;
+      margin-left: 6px;
+    }
+  
+    .dot {
+      animation: blink 1s infinite;
+    }
+  
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+  
+    @keyframes blink {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+  
+    .spinner {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin-left: 10px;
+      border: 2px solid #ccc;
+      border-top: 2px solid #84a59d;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      vertical-align: middle;
+    }
+  
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+
   <title>KnowBoi – Ask a Question</title>
 
   <style>
@@ -129,16 +170,76 @@
     <% }) %>
   <% } %>
 
-  <form method="POST" action="/ask">
-    <input type="text" name="question" placeholder="Type your question here..." required />
+  <form id="ask-form">
+    <input type="text" id="question-input" placeholder="Ask me something..." required />
     <button type="submit">Ask</button>
   </form>
+  
+  <div id="chat-box">
+    <% if (chatHistory && chatHistory.length) { %>
+      <% chatHistory.forEach((item, i) => { %>
+        <div class="chat-entry">
+          <p><strong>You:</strong> <%= item.q %></p>
+          <p><strong>KnowBoi:</strong> <%= item.a %></p>
+        </div>
+      <% }) %>
+    <% } %>
+  </div>
 
   <div class="nav">
     <a href="/">🏠 Back to Menu</a>
     <a href="/upload">📄 Upload</a>
     <a href="/logout">🚪 Logout</a>
   </div>
+
+  <script>
+    const form = document.getElementById('ask-form');
+    const questionInput = document.getElementById('question-input');
+    const chatBox = document.getElementById('chat-box');
+  
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+  
+      const question = questionInput.value.trim();
+      if (!question) return;
+  
+      // Add user message
+      const userMsg = document.createElement('div');
+      userMsg.className = 'chat-entry';
+      userMsg.innerHTML = `<strong>You:</strong> ${question}`;
+      chatBox.appendChild(userMsg);
+  
+      // Add bot loading message
+      const botMsg = document.createElement('div');
+      botMsg.className = 'chat-entry';
+      botMsg.innerHTML = `
+        <strong>KnowBoi:</strong>
+        <span class="dots">Typing<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span>
+        <span class="spinner"></span>
+      `;
+      chatBox.appendChild(botMsg);
+  
+      // Scroll to bottom
+      chatBox.scrollTop = chatBox.scrollHeight;
+  
+      const res = await fetch('/ask', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ question })
+      });
+  
+      const data = await res.json();
+  
+      // Replace typing animation with real answer
+      botMsg.innerHTML = `<strong>KnowBoi:</strong> ${data.answer}`;
+  
+      questionInput.value = '';
+      chatBox.scrollTop = chatBox.scrollHeight;
+    });
+  </script>
+  
 
 </body>
 
