@@ -29,7 +29,7 @@ router.post('/ask', requireLogin, express.json(), async (req, res) => {
     // 🧠 Generate embedding using OpenAI
     const embeddingResponse = await openai.embeddings.create({
       model: "text-embedding-ada-002",
-      input: text,
+      input: question,
     });
     const queryVector = embedResponse.data.data[0].embedding;
 
